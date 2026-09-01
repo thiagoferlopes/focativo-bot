@@ -45,6 +45,9 @@ async def tarefas(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = '\n'.join(f'{i+1}. {t}' for i, t in enumerate(lista))
     await update.message.reply_text(f'Suas tarefas:\n{texto}')
 
+async def comando_desconhecido(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('Desculpe, não conheço esse comando 🤔\nDigite /ajuda para ver os comandos disponíveis.')
+
 async def eco(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(update.message.text)
 
@@ -55,5 +58,6 @@ app.add_handler(CommandHandler('ajuda', ajuda))
 app.add_handler(CommandHandler('tarefa', tarefa))
 app.add_handler(CommandHandler('tarefas', tarefas))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, eco))
+app.add_handler(MessageHandler(filters.COMMAND, comando_desconhecido))
 
 app.run_polling()
