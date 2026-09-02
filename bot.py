@@ -48,8 +48,26 @@ async def tarefas(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def comando_desconhecido(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Desculpe, não conheço esse comando 🤔\nDigite /ajuda para ver os comandos disponíveis.')
 
-async def eco(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(update.message.text)
+respostas = {
+    'oi': 'Oi! Pronto para colocar suas tarefas em dia? 🎯',
+    'ola': 'Olá! Pronto para colocar suas tarefas em dia? 🎯',
+    'obrigado': 'De nada! Estou aqui para te ajudar a manter o foco e organizar suas tarefas.',
+    'obrigada': 'De nada! Estou aqui para te ajudar a manter o foco e organizar suas tarefas.',
+    'pomodoro': 'Em breve vou ter um comando /pomodoro para ajudar a organizar seus pomodoros! ⏱️',
+    'tchau': 'Tchau! Até a próxima! 👋'
+}
+
+async def responder_texto(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    texto = update.message.text.lower()
+    resposta = respostas.get(texto)
+
+    for palavra, resposta in respostas.items():
+        if palavra in texto:
+            await update.message.reply_text(resposta)
+            return
+    await update.message.reply_text(
+        'Desculpe, não entendi. Digite /ajuda para ver os comandos disponíveis.'
+)
 
 app = ApplicationBuilder().token(TOKEN).build()
 
@@ -57,7 +75,7 @@ app.add_handler(CommandHandler('start', start))
 app.add_handler(CommandHandler('ajuda', ajuda))
 app.add_handler(CommandHandler('tarefa', tarefa))
 app.add_handler(CommandHandler('tarefas', tarefas))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, eco))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_texto))
 app.add_handler(MessageHandler(filters.COMMAND, comando_desconhecido))
 
 app.run_polling()
