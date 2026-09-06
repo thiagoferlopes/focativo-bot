@@ -1,7 +1,7 @@
 import os
 import logging
 from dotenv import load_dotenv
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -16,11 +16,14 @@ load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    teclado = InlineKeyboardMarkup([
+        [InlineKeyboardButton('📋 Minhas Tarefas', callback_data='ver_tarefas')],
+        [InlineKeyboardButton('❓ Ajuda', callback_data='ver_ajuda')]
+    ])
     await update.message.reply_text(
         'Olá eu sou o Focativo 🎯\n'
         'Te ajudo a manter o foco e organizar suas tarefas.\n'
-        'Digite /ajuda para você ver o que eu sei fazer!'
-)
+    , reply_markup=teclado)
 async def ajuda(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         'Comandos disponíveis:\n'
