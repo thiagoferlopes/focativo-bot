@@ -3,6 +3,7 @@ import logging
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
+    CallbackQueryHandler,
     ApplicationBuilder,
     CommandHandler,
     MessageHandler, 
@@ -13,7 +14,27 @@ from telegram.ext import (
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
-TOKEN = os.getenv("TELEGRAM_TOKEN")
+TOKEN = os.getenv('TELEGRAM_TOKEN')
+
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == 'ver_tarefas':
+        lista = context.user_data.get('tarefas', [])
+        if not lista:
+            texto = 'Você não tem tarefas pendentes.'
+        else:
+            texto = 'Suas tarefas:\n' + '\n'.join(f'{i+1}. {t}' for i, t in enumerate(lista))
+        await query.edit_message_text(texto)
+    elif query.data == 'ver_ajuda':
+        await query.edit_message_text(
+            'Comandos disponíveis:\n'
+            '/start — Mensagem de boas-vindas\n'
+            '/ajuda — Mostra esta lista de comandos\n'
+            '/tarefa — Registra alguma tarefa\n'
+            '/tarefas — Lista todas as suas tarefas registradas\n'
+    )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     teclado = InlineKeyboardMarkup([
@@ -93,6 +114,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
 
 app = ApplicationBuilder().token(TOKEN).build()
 
+app.add_handler(CallbackQueryHandler(button_handler))
 app.add_handler(CommandHandler('start', start))
 app.add_handler(CommandHandler('ajuda', ajuda))
 app.add_handler(CommandHandler('tarefa', tarefa))
