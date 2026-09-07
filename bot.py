@@ -35,6 +35,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             '/ajuda — Mostra esta lista de comandos\n'
             '/tarefa — Registra alguma tarefa\n'
             '/tarefas — Lista todas as suas tarefas registradas\n'
+            '/motivacao — Receba uma frase motivacional em inglês\n'
     )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
