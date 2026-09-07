@@ -1,5 +1,6 @@
 import os
 import logging
+import requests
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -80,6 +81,15 @@ async def tarefas(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             'Sua lista de tarefas ficou grande demais para eu enviar aqui 😅\n'
         )
+async def motivacao(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        resposta = requests.get('https://zenquotes.io/api/random', timeout=5)
+        dado = resposta.json()[0]
+        texto = f'"{dado["q"]}"\n- {dado["a"]} (via zenquotes.io)'
+    except Exception as e:
+        logging.error(f'Erro ao buscar citação motivacional: {e}')
+        texto = 'Não consegui buscar uma frase agora. Tente novamente daqui a pouco!'
+    await update.message.reply_text(texto)
 
 async def comando_desconhecido(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Desculpe, não conheço esse comando 🤔\nDigite /ajuda para ver os comandos disponíveis.')
@@ -119,6 +129,7 @@ app.add_handler(CommandHandler('start', start))
 app.add_handler(CommandHandler('ajuda', ajuda))
 app.add_handler(CommandHandler('tarefa', tarefa))
 app.add_handler(CommandHandler('tarefas', tarefas))
+app.add_handler(CommandHandler('motivacao', motivacao))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_texto))
 app.add_handler(MessageHandler(filters.COMMAND, comando_desconhecido))
 app.add_error_handler(error_handler)
