@@ -53,6 +53,7 @@ async def ajuda(update: Update, context: ContextTypes.DEFAULT_TYPE):
         '/ajuda — Mostra esta lista de comandos\n'
         '/tarefa — Registra alguma tarefa\n'
         '/tarefas — Lista todas as suas tarefas registradas\n'
+        '/motivacao — Receba uma frase motivacional em inglês\n'
 )
 MAX_TAREFAS_LEN = 200
 async def tarefa(update: Update, context: ContextTypes.DEFAULT_TYPE):
