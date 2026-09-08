@@ -12,7 +12,14 @@ from telegram.ext import (
     filters,
 )
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('bot.log', encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 load_dotenv()
 
 TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -20,8 +27,10 @@ TOKEN = os.getenv('TELEGRAM_TOKEN')
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    logger.info(f'Usuário {update.effective_user.id} clicou no botão: {query.data}')
 
     if query.data == 'ver_tarefas':
+        logger.info(f'Usuário {update.effective_user.id} solicitou a lista de tarefas.')
         lista = context.user_data.get('tarefas', [])
         if not lista:
             texto = 'Você não tem tarefas pendentes.'
@@ -29,6 +38,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             texto = 'Suas tarefas:\n' + '\n'.join(f'{i+1}. {t}' for i, t in enumerate(lista))
         await query.edit_message_text(texto)
     elif query.data == 'ver_ajuda':
+        logger.info(f'Usuário {update.effective_user.id} solicitou ajuda.')
         await query.edit_message_text(
             'Comandos disponíveis:\n'
             '/start — Mensagem de boas-vindas\n'
@@ -39,6 +49,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger.info(f'Usuário {update.effective_user.id} iniciou o bot.')
     teclado = InlineKeyboardMarkup([
         [InlineKeyboardButton('📋 Minhas Tarefas', callback_data='ver_tarefas')],
         [InlineKeyboardButton('❓ Ajuda', callback_data='ver_ajuda')]
@@ -47,7 +58,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'Olá eu sou o Focativo 🎯\n'
         'Te ajudo a manter o foco e organizar suas tarefas.\n'
     , reply_markup=teclado)
+
 async def ajuda(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger.info(f'Usuário {update.effective_user.id} pediu ajuda.')
     await update.message.reply_text(
         'Comandos disponíveis:\n'
         '/start — Mensagem de boas-vindas\n'
@@ -55,7 +68,7 @@ async def ajuda(update: Update, context: ContextTypes.DEFAULT_TYPE):
         '/tarefa — Registra alguma tarefa\n'
         '/tarefas — Lista todas as suas tarefas registradas\n'
         '/motivacao — Receba uma frase motivacional em inglês\n'
-)
+    )
 MAX_TAREFAS_LEN = 200
 async def tarefa(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = ' '.join(context.args)
@@ -68,10 +81,12 @@ async def tarefa(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
     context.user_data.setdefault('tarefas', []).append(texto)
+    logger.info(f'Usuário {update.effective_user.id} adicionou a tarefa: {texto}')
     await update.message.reply_text(f'Tarefa adicionada: {texto}')
 
 async def tarefas(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lista = context.user_data.get('tarefas', [])
+    logger.info(f'Usuário {update.effective_user.id} solicitou ({len(lista)}) tarefas.')
     if not lista:
         await update.message.reply_text('Você não tem tarefas pendentes.')
         return
@@ -79,21 +94,23 @@ async def tarefas(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await update.message.reply_text(f'Suas tarefas:\n{texto}')
     except Exception as e:
-        logging.error(f'Erro ao enviar lista de tarefas: {e}')
+        logger.error(f'Erro ao enviar lista de tarefas: {e}')
         await update.message.reply_text(
             'Sua lista de tarefas ficou grande demais para eu enviar aqui 😅\n'
         )
 async def motivacao(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger.info(f'Usuário {update.effective_user.id} pediu uma frase.')
     try:
         resposta = requests.get('https://zenquotes.io/api/random', timeout=5)
         dado = resposta.json()[0]
         texto = f'"{dado["q"]}"\n- {dado["a"]} (via zenquotes.io)'
     except Exception as e:
-        logging.error(f'Erro ao buscar citação motivacional: {e}')
+        logger.error(f'Erro ao buscar citação motivacional: {e}')
         texto = 'Não consegui buscar uma frase agora. Tente novamente daqui a pouco!'
     await update.message.reply_text(texto)
 
 async def comando_desconhecido(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger.info(f'Usuário {update.effective_user.id} tentou usar um comando desconhecido: {update.message.text}')
     await update.message.reply_text('Desculpe, não conheço esse comando 🤔\nDigite /ajuda para ver os comandos disponíveis.')
 
 respostas = {
@@ -108,17 +125,16 @@ respostas = {
 
 async def responder_texto(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = update.message.text.lower()
-    resposta = respostas.get(texto)
-
     for palavra, resposta in respostas.items():
         if palavra in texto:
             await update.message.reply_text(resposta)
             return
+    logger.info(f'Usuário {update.effective_user.id} enviou mensagem desconhecida: {texto}')
     await update.message.reply_text(
         'Desculpe, não entendi. Digite /ajuda para ver os comandos disponíveis.'
-)
+    )
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
-    logging.error("Erro ao processar atualização:", exc_info=context.error)
+    logger.error("Erro ao processar atualização:", exc_info=context.error)
     if isinstance(update, Update) and update.effective_message:
         await update.effective_message.reply_text(
             'Ops, algo deu errado aqui do meu lado ☹️\n Tente novamente mais tarde ou digite /ajuda para ver os comandos disponíveis.'
