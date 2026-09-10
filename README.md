@@ -8,11 +8,14 @@ Bot de produtividade para Telegram: gerencia tarefas e ajuda a manter o foco, re
 - `/ajuda` — LISTA DE COMANDOS DISPONÍVEIS
 - `/tarefa <descrição>` —  ADICIONA UMA TAREFA (ex: `/tarefa Estudar Python`)
 - `/tarefas` — LISTA AS TAREFAS PENDENTES
+- `/motivacao` — ENVIA UMA FRASE MOTIVACIONAL EM INGLÊS
 
 ## Tecnologias
 - Python 3.10+
 - python-telegram-bot
 - python-dotenv
+- requests
+- Frases via [ZenQuotes API](https://zenquotes.io/)
 
 ## Como rodar localmente
 
