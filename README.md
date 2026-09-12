@@ -1,9 +1,8 @@
 # Focativo Bot 🎯
-![Tela inicial](assets/1.png)
-![Tarefa/tarefas](assets/2.png)
-![Frase em inglês da API](assets/3.png)
 
 Bot de produtividade para Telegram: gerencia tarefas e ajuda a manter o foco, respondendo automaticamente a comando e mensagens de texto, além de enviar uma frase motivacional em inglês para ajudar no desenvolvimento da linguagem.
+
+![Imagem Print do Bot](assets/img-bot.png)
 
 ## Sobre este projeto
 
