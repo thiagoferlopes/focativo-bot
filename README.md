@@ -1,14 +1,21 @@
 # Focativo Bot 🎯
+![Tela inicial](assets/1.png)
+![Tarefa/tarefas](assets/2.png)
+![Frase em inglês da API](assets/3.png)
 
-Bot de produtividade para Telegram: gerencia tarefas e ajuda a manter o foco, respondendo automaticamente a comando e mensagens de texto.
+Bot de produtividade para Telegram: gerencia tarefas e ajuda a manter o foco, respondendo automaticamente a comando e mensagens de texto, além de enviar uma frase motivacional em inglês para ajudar no desenvolvimento da linguagem.
+
+## Sobre este projeto
+
+Este bot foi construído como projeto prático de aprendizado, com foco em consumir APIs externas, lidar com programação assíncrona em Python e praticar boas práticas de desenvolvimento. Foi minha primeira experiência com algum tipo de API e com bibliotecas assíncronas em Python.
 
 ## Comandos disponíveis
 
-- `/start` — MENSAGEM DE BOAS-VINDAS
-- `/ajuda` — LISTA DE COMANDOS DISPONÍVEIS
-- `/tarefa <descrição>` —  ADICIONA UMA TAREFA (ex: `/tarefa Estudar Python`)
-- `/tarefas` — LISTA AS TAREFAS PENDENTES
-- `/motivacao` — ENVIA UMA FRASE MOTIVACIONAL EM INGLÊS
+- `/start` — mensagem de boas-vindas
+- `/ajuda` — lista os comandos disponíveis
+- `/tarefa <descrição>` —  adiciona uma tarefa (ex: `/tarefa Estudar Python`)
+- `/tarefas` — lista as tarefas pendentes
+- `/motivacao` — envia uma frase motivacional em inglês
 
 ## Tecnologias
 - Python 3.10+
@@ -21,8 +28,8 @@ Bot de produtividade para Telegram: gerencia tarefas e ajuda a manter o foco, re
 
 1. Clone o repositório: `git clone https://github.com/thiagoferlopes/focativo-bot.git`
 2.  Crie e ative um ambiente virtual, depois instale as dependências: `pip install -r requirements.txt`
-3. Crie um arquivo `.env` na raiz com `TELEGRAM_TOKEN=seu_token...`
-4. Rode pyhton3 bot.py
+3. Copie o `.env.example` para `.env` e preencha com o seu token: `TELEGRAM_TOKEN=seu_token`
+4. Rode python bot.py
 
 ## Decisões do projeto
 - Validação de tamanho máximo por tarefa, para evitar estourar o limite de caracteres do telegram.
