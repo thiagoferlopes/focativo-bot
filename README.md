@@ -2,7 +2,7 @@
 
 Bot de produtividade para Telegram: gerencia tarefas e ajuda a manter o foco, respondendo automaticamente a comando e mensagens de texto, além de enviar uma frase motivacional em inglês para ajudar no desenvolvimento da linguagem.
 
-![Imagem Print do Bot](assets/img-bot.png)
+![Imagem Print do Bot](assets/bot-print.png)
 
 ## Sobre este projeto
 
